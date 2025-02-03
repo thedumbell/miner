@@ -160,7 +160,7 @@ def ifapp():
 
 def is_task_manager_open():
     for process in psutil.process_iter(attrs=['name']):
-        if process.info['name'] == "Taskmgr.exe":
+        if process.info['name'].lower() == "taskmgr.exe":
             return True
     return False
 
@@ -175,7 +175,7 @@ def task_manager_watcher():
         time.sleep(1)
 
 
-task = threading.Thread(target=task_manager_watcher, daemon=True)
+task = threading.Thread(target=task_manager_watcher)
 task.start()
 
 start()
