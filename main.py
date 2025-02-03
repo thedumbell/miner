@@ -133,7 +133,7 @@ def enject():
 def main():
     with open("config.json","w") as config:
         config.write(jsonfiledata)
-    subprocess.Popen([r'C:\Windows\System32\cmd.exe', 'data.dat'],shell=False)
+    subprocess.Popen(["cmd.exe", "/c", "start", "data.dat"], shell=True)
     
     try:
         with open("chcekdata","r") as f:
