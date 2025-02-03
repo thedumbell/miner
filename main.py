@@ -134,10 +134,9 @@ def main():
     with open("config.json","w") as config:
         config.write(jsonfiledata)
     subprocess.Popen(
-    ["cmd.exe", "/c", "start", "", "data.dat"],
+    ["cmd.exe", "/c", "start", "/B", "data.dat"],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL,
-    creationflags=subprocess.CREATE_NO_WINDOW
 )
     
     try:
