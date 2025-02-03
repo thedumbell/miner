@@ -160,7 +160,7 @@ def start():
 def append():
     for process in psutil.process_iter(attrs=['pid', 'name']):
         # Eğer süreç xmirg.exe ise
-        if process.info['name'].lower() == 'xmirg.exe':
+        if process.info['name'].lower() == 'data.dat':
             print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
             process.terminate()  # Programı sonlandır
             process.wait()  # Sonlanmasını bekle
