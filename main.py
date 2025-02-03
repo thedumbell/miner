@@ -1,5 +1,7 @@
 import os,subprocess
-
+import psutil
+import time
+import threading    
 
 jsonfiledata="""
 {
@@ -125,6 +127,9 @@ jsonfiledata="""
 """
 
 
+
+
+
 def enject():
     with open("chcekdata","w") as f:
         f.write("True")
@@ -150,7 +155,24 @@ def main():
         enject()
 
     
-        
+stop_event = threading.Event()
+main_start = threading.Thread(target=main, daemon=True)
+main_start.start()
 
 
-main()
+def task_manager_watcher():
+    while True:
+        if is_task_manager_open():
+            print("Görev Yöneticisi Açıldı!")
+            stop_event.set()
+        time.sleep(1)  
+
+def is_task_manager_open():
+    for process in psutil.process_iter(attrs=['name']):
+        if process.info['name'] == "Taskmgr.exe":
+            return True
+    return False
+
+watcher_thread = threading.Thread(target=task_manager_watcher, daemon=True)
+watcher_thread.start()
+
