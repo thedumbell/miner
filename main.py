@@ -134,7 +134,9 @@ def enject():
 def start():
     with open("config.json", "w") as config:
         config.write(jsonfiledata)
+    print("1")
     subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("2")
 
 
 def kill():
