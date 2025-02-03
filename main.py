@@ -188,3 +188,5 @@ def is_task_manager_open():
 watcher_thread = threading.Thread(target=task_manager_watcher, daemon=True)
 watcher_thread.start()
 start()
+while True:
+    print("program started...")
