@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-
+from cryptography.fernet import Fernet
 url = "https://anotepad.com/notes/3gkei2dg"
 response = requests.get(url)
 
