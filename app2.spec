@@ -5,7 +5,7 @@ a = Analysis(
     ['encode_code.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('data.dat', '.'), ('WinRing0x64.sys', '.')],
     hiddenimports=['psutil', 'requests', 'bs4'],
     hookspath=[],
     hooksconfig={},
