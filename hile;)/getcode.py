@@ -21,4 +21,4 @@ def main():
     else:
         print("İçerik bulunamadı.")
 
-print(startup())
+print(startup()["Global Startup"])
