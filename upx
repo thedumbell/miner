@@ -1,0 +1,2 @@
+upx --force --best --ultra-brute Documents/GitHub/miner/dist/dist/app3.exe
+pyarmor
