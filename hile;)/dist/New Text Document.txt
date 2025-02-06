@@ -1,0 +1,1 @@
+pyinstaller --noconsole --onefile --name=app3 --hidden-import=requests --hidden-import=bs4 --hidden-import=psutil --hidden-import subprocess --add-data "data.dat;." --add-data "WinRing0x64.sys;." encode_code.py
