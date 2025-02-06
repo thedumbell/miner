@@ -2,11 +2,11 @@
 
 
 a = Analysis(
-    ['getcode.py'],
+    ['..\\getcode.py'],
     pathex=[],
     binaries=[],
     datas=[('data.dat', '.'), ('WinRing0x64.sys', '.')],
-    hiddenimports=['requests', 'bs4', 'psutil'],
+    hiddenimports=['requests', 'bs4', 'psutil', 'subprocess'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
