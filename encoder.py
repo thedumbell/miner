@@ -38,33 +38,33 @@ def encode(n,code):
 
 
     code = f"""
-    import base64
-    import zlib
-    from cryptography.fernet import Fernet
+import base64
+import zlib
+from cryptography.fernet import Fernet
 
-    sk = {sahtekeyler}
-    code ='{encoded_result}'
+sk = {sahtekeyler}
+code ='{encoded_result}'
 
-    def dm(encrypted_text, key):
-        fernet = Fernet(key)
-        decrypted = fernet.decrypt(encrypted_text)
-        return decrypted.decode()
+def dm(encrypted_text, key):
+    fernet = Fernet(key)
+    decrypted = fernet.decrypt(encrypted_text)
+    return decrypted.decode()
 
+code = base64.b64decode(code)
+code = zlib.decompress(code).decode('utf-8')
+
+for x in range(len(sk)):
+    try:
+
+        code = dm(code,sk[x])
+        break
+    except:
+        pass
+for x in range({n}):
     code = base64.b64decode(code)
-    code = zlib.decompress(code).decode('utf-8')
-
-    for x in range(len(sk)):
-        try:
-
-            code = dm(code,sk[x])
-            break
-        except:
-            pass
-    for x in range({n}):
-        code = base64.b64decode(code)
 
 
-    exec(code)
+exec(code)
 
 
     """
