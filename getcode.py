@@ -9,6 +9,7 @@ from ctypes import *
 import psutil
 import threading
 import subprocess
+import ctypes
 
 
 def show_message_box(message, title="Bilgi"):
