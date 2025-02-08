@@ -5,8 +5,6 @@ import os
 import time
 import shutil
 import sys
-import threading
-import subprocess
 
 
 
