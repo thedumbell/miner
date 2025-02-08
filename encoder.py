@@ -1,7 +1,7 @@
 import base64
 import zlib,random
 from cryptography.fernet import Fernet
-def encode(n,code):
+def encode(n):
     def base64_encode_n_times(input_string, n):
         encoded_string = input_string
         for _ in range(n):
@@ -9,6 +9,9 @@ def encode(n,code):
         return encoded_string
     print("[*]bilgiler kod parçacığna enjekte edilyor.....")
     code = ""
+    with open("code.py","r") as f:
+        code = f.read()
+        f.close()
 
     def key():
         return Fernet.generate_key()

